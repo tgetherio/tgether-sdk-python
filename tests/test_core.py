@@ -42,8 +42,26 @@ def test_generate_order_response(sdk):
     vendor_id = 2
     vendor_order_id = "ORDER789"
     total_amount = 3_000_000
+    items=[
+        {
+            "item_name": "eggs",
+            "quantity": 4,
+            "price": 500_000
+        },
+        {
+            "item_name": "bacon",
+            "quantity": 2,
+            "price": 300_000
+        },
+        {
+            "item_name": "ITEM456",
+            "quantity": 2,
+            "price": 2_000_000
+        }
+    ]
 
-    response = sdk.generate_order_response(vendor_id, vendor_order_id, total_amount)
+
+    response = sdk.generate_order_response(vendor_id, vendor_order_id, total_amount, items=items)
 
     assert response["code"] == "TGETHER_NEEDS_PAYMENT"
     assert response["order"]["vendorOrderId"] == vendor_order_id

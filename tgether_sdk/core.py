@@ -4,7 +4,7 @@ from eth_account import Account
 from eth_account.messages import encode_typed_data
 from eth_utils import keccak
 import time
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 class TgetherSDK:
     def __init__(self, private_key: str, verifying_contract: str, chain_id: int = 42161):
@@ -119,6 +119,7 @@ class TgetherSDK:
         vendor_order_id: str,
         total_amount: int,
         pay_url: Optional[str] = None,
+        items: Optional[List[Dict[str, Any]]] = None,
         valid_until: Optional[int] = None,
         nonce: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -137,6 +138,7 @@ class TgetherSDK:
             A dictionary containing a signed order payload with metadata.
         """
         signed = self.sign_order(vendor_id, vendor_order_id, total_amount, valid_until, nonce)
+
         return {
             "code": "TGETHER_NEEDS_PAYMENT",
             "order": signed["order"],
@@ -145,5 +147,6 @@ class TgetherSDK:
             "contract": self.verifying_contract,
             "chainId": self.chain_id,
             "amount": signed["order"]["totalAmount"],
-            "pay_url": pay_url or "https://app.tgether.xyz/pay?vendorOrderId=" + vendor_order_id
+            "items": items or {},
+            "pay_url": pay_url or f"https://app.tgether.com/pay?vendorId=${vendor_id}&vendorOrderId=${vendor_order_id}"
         }
